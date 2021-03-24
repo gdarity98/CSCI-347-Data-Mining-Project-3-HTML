@@ -1,0 +1,309 @@
+<html>
+<head>
+<title>Project 3.py</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cc7832;}
+.s1 { color: #a9b7c6;}
+.s2 { color: #808080;}
+.s3 { color: #6897bb;}
+.s4 { color: #6a8759;}
+.ln { color: #606366; font-weight: normal; font-style: normal; }
+</style>
+</head>
+<body bgcolor="#2b2b2b">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+Project 3.py</font>
+</center></td></tr></table>
+<pre><a name="l1"><span class="ln">1    </span></a><span class="s0">import </span><span class="s1">numpy </span><span class="s0">as </span><span class="s1">np</span>
+<a name="l2"><span class="ln">2    </span></a><span class="s0">from </span><span class="s1">sklearn.datasets </span><span class="s0">import </span><span class="s1">make_blobs</span>
+<a name="l3"><span class="ln">3    </span></a><span class="s0">import </span><span class="s1">matplotlib.pyplot </span><span class="s0">as </span><span class="s1">plt</span>
+<a name="l4"><span class="ln">4    </span></a><span class="s0">import </span><span class="s1">random</span>
+<a name="l5"><span class="ln">5    </span></a><span class="s0">import </span><span class="s1">math</span>
+<a name="l6"><span class="ln">6    </span></a><span class="s0">from </span><span class="s1">sklearn.decomposition </span><span class="s0">import </span><span class="s1">PCA</span>
+<a name="l7"><span class="ln">7    </span></a>
+<a name="l8"><span class="ln">8    </span></a>
+<a name="l9"><span class="ln">9    </span></a><span class="s2"># Implement the K-Means Clustering Algorithm</span>
+<a name="l10"><span class="ln">10   </span></a><span class="s0">def </span><span class="s1">k_means(data_matrix</span><span class="s0">, </span><span class="s1">k</span><span class="s0">, </span><span class="s1">epsilon):</span>
+<a name="l11"><span class="ln">11   </span></a>    <span class="s2"># Randomly select Data points to be the means</span>
+<a name="l12"><span class="ln">12   </span></a>    <span class="s2">#   I'm not sure if this is bad to do,</span>
+<a name="l13"><span class="ln">13   </span></a>    <span class="s2">#   should I be generating random number within the range of the data set?</span>
+<a name="l14"><span class="ln">14   </span></a>    <span class="s2">#   If I dont hard code the means I get different answers form the test cases</span>
+<a name="l15"><span class="ln">15   </span></a>    <span class="s2"># the index of the means is going to be the cluster assigned.</span>
+<a name="l16"><span class="ln">16   </span></a>    <span class="s1">max_random = len(data_matrix)</span>
+<a name="l17"><span class="ln">17   </span></a>    <span class="s1">index = random.sample(range(</span><span class="s3">0</span><span class="s0">, </span><span class="s1">max_random)</span><span class="s0">, </span><span class="s1">k)</span>
+<a name="l18"><span class="ln">18   </span></a>    <span class="s2"># randomly initializing the means from the data set</span>
+<a name="l19"><span class="ln">19   </span></a>    <span class="s1">means = np.zeros((k</span><span class="s0">, </span><span class="s1">len(data_matrix[</span><span class="s3">0</span><span class="s1">])))</span>
+<a name="l20"><span class="ln">20   </span></a>    <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(k):</span>
+<a name="l21"><span class="ln">21   </span></a>        <span class="s1">d_instance = data_matrix[index[i]]</span>
+<a name="l22"><span class="ln">22   </span></a>        <span class="s1">means[i] = d_instance</span>
+<a name="l23"><span class="ln">23   </span></a>
+<a name="l24"><span class="ln">24   </span></a>    <span class="s2"># hard coding what the means are</span>
+<a name="l25"><span class="ln">25   </span></a>    <span class="s2"># Test Case 1</span>
+<a name="l26"><span class="ln">26   </span></a>    <span class="s2"># means = np.array([[3.90304975, 2.51839422], [-1.21226502, 3.6765421]])</span>
+<a name="l27"><span class="ln">27   </span></a>    <span class="s2"># Test Case 2</span>
+<a name="l28"><span class="ln">28   </span></a>    <span class="s2"># means = np.array([[3.67371566, 3.05039513], [-2.27144128, 0.58447117], [4.50290941, 4.78503096]])</span>
+<a name="l29"><span class="ln">29   </span></a>    <span class="s2"># Test Case 3</span>
+<a name="l30"><span class="ln">30   </span></a>    <span class="s2"># means = np.array([[3.75224869, -2.9680029], [-1.45630451, -1.65071389], [-3.16968936, -1.47368135]])</span>
+<a name="l31"><span class="ln">31   </span></a>
+<a name="l32"><span class="ln">32   </span></a>    <span class="s1">new_means = np.zeros((k</span><span class="s0">, </span><span class="s1">len(data_matrix[</span><span class="s3">0</span><span class="s1">])))</span>
+<a name="l33"><span class="ln">33   </span></a>    <span class="s2"># print(means)</span>
+<a name="l34"><span class="ln">34   </span></a>    <span class="s2"># print(new_means)</span>
+<a name="l35"><span class="ln">35   </span></a>    <span class="s1">run = </span><span class="s0">True</span>
+<a name="l36"><span class="ln">36   </span></a>    <span class="s0">while </span><span class="s1">run:</span>
+<a name="l37"><span class="ln">37   </span></a>        <span class="s2"># This is what keeps track of what cluster a data instance has been assigned to.</span>
+<a name="l38"><span class="ln">38   </span></a>        <span class="s1">cluster_assignment = np.zeros(len(data_matrix))</span>
+<a name="l39"><span class="ln">39   </span></a>        <span class="s2"># print(len(cluster_assignment))</span>
+<a name="l40"><span class="ln">40   </span></a>
+<a name="l41"><span class="ln">41   </span></a>        <span class="s2"># Now I need to assign each point to the cluster with the closest mean</span>
+<a name="l42"><span class="ln">42   </span></a>        <span class="s2"># if there are ties then pick the mean with the lowest index</span>
+<a name="l43"><span class="ln">43   </span></a>        <span class="s0">for </span><span class="s1">data </span><span class="s0">in </span><span class="s1">range(len(data_matrix)):</span>
+<a name="l44"><span class="ln">44   </span></a>            <span class="s1">distance = np.zeros(len(means))</span>
+<a name="l45"><span class="ln">45   </span></a>            <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(len(means)):</span>
+<a name="l46"><span class="ln">46   </span></a>                <span class="s0">for </span><span class="s1">j </span><span class="s0">in </span><span class="s1">range(len(means[i])):</span>
+<a name="l47"><span class="ln">47   </span></a>                    <span class="s1">x_i = data_matrix[data][j]</span>
+<a name="l48"><span class="ln">48   </span></a>                    <span class="s1">mu_i = means[i][j]</span>
+<a name="l49"><span class="ln">49   </span></a>                    <span class="s1">distance[i] += (data_matrix[data][j] - means[i][j]) ** </span><span class="s3">2</span>
+<a name="l50"><span class="ln">50   </span></a>            <span class="s2"># Numpy.argmin() selects the indices corresponding to the first occurrence if there is a tie</span>
+<a name="l51"><span class="ln">51   </span></a>            <span class="s2"># therefore if the distances look like [0, 5, 0] then the point will be assigned to cluster 0</span>
+<a name="l52"><span class="ln">52   </span></a>            <span class="s1">cluster = np.argmin(distance)</span>
+<a name="l53"><span class="ln">53   </span></a>            <span class="s1">cluster_assignment[data] = cluster + </span><span class="s3">1</span>
+<a name="l54"><span class="ln">54   </span></a>
+<a name="l55"><span class="ln">55   </span></a>        <span class="s2"># recompute the means based on cluster membership</span>
+<a name="l56"><span class="ln">56   </span></a>        <span class="s0">for </span><span class="s1">mean </span><span class="s0">in </span><span class="s1">range(len(new_means)):</span>
+<a name="l57"><span class="ln">57   </span></a>            <span class="s1">count = </span><span class="s3">0</span>
+<a name="l58"><span class="ln">58   </span></a>            <span class="s0">for </span><span class="s1">data </span><span class="s0">in </span><span class="s1">range(len(data_matrix)):</span>
+<a name="l59"><span class="ln">59   </span></a>                <span class="s0">if </span><span class="s1">cluster_assignment[data] == mean + </span><span class="s3">1</span><span class="s1">:</span>
+<a name="l60"><span class="ln">60   </span></a>                    <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(len(new_means[</span><span class="s3">0</span><span class="s1">])):</span>
+<a name="l61"><span class="ln">61   </span></a>                        <span class="s1">new_means[mean][i] += data_matrix[data][i]</span>
+<a name="l62"><span class="ln">62   </span></a>                    <span class="s1">count += </span><span class="s3">1</span>
+<a name="l63"><span class="ln">63   </span></a>            <span class="s0">if </span><span class="s1">count != </span><span class="s3">0</span><span class="s1">:</span>
+<a name="l64"><span class="ln">64   </span></a>                <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(len(new_means[</span><span class="s3">0</span><span class="s1">])):</span>
+<a name="l65"><span class="ln">65   </span></a>                    <span class="s1">new_means[mean][i] = new_means[mean][i] / count</span>
+<a name="l66"><span class="ln">66   </span></a>            <span class="s0">if </span><span class="s1">count == </span><span class="s3">0</span><span class="s1">:</span>
+<a name="l67"><span class="ln">67   </span></a>                <span class="s2"># print(&quot;No Attributes Assigned to cluster:&quot;, mean)</span>
+<a name="l68"><span class="ln">68   </span></a>                <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(len(new_means[</span><span class="s3">0</span><span class="s1">])):</span>
+<a name="l69"><span class="ln">69   </span></a>                    <span class="s1">new_means[mean][i] = </span><span class="s0">None</span>
+<a name="l70"><span class="ln">70   </span></a>
+<a name="l71"><span class="ln">71   </span></a>        <span class="s2"># keep going until epsilon</span>
+<a name="l72"><span class="ln">72   </span></a>
+<a name="l73"><span class="ln">73   </span></a>        <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(len(means)):</span>
+<a name="l74"><span class="ln">74   </span></a>            <span class="s0">for </span><span class="s1">j </span><span class="s0">in </span><span class="s1">range(len(means[</span><span class="s3">0</span><span class="s1">])):</span>
+<a name="l75"><span class="ln">75   </span></a>                <span class="s1">x = means[i][j]</span>
+<a name="l76"><span class="ln">76   </span></a>                <span class="s1">y = new_means[i][j]</span>
+<a name="l77"><span class="ln">77   </span></a>                <span class="s0">if </span><span class="s1">abs(means[i][j] - new_means[i][j]) &lt;= epsilon:</span>
+<a name="l78"><span class="ln">78   </span></a>                    <span class="s1">run = </span><span class="s0">False</span>
+<a name="l79"><span class="ln">79   </span></a>        <span class="s0">else</span><span class="s1">:</span>
+<a name="l80"><span class="ln">80   </span></a>            <span class="s1">means = np.copy(new_means)</span>
+<a name="l81"><span class="ln">81   </span></a>            <span class="s1">new_means = np.zeros((k</span><span class="s0">, </span><span class="s1">len(data_matrix[</span><span class="s3">0</span><span class="s1">])))</span>
+<a name="l82"><span class="ln">82   </span></a>
+<a name="l83"><span class="ln">83   </span></a>    <span class="s2"># print(cluster_assignment)</span>
+<a name="l84"><span class="ln">84   </span></a>    <span class="s2"># print(means)</span>
+<a name="l85"><span class="ln">85   </span></a>    <span class="s0">return </span><span class="s1">cluster_assignment</span><span class="s0">, </span><span class="s1">means</span>
+<a name="l86"><span class="ln">86   </span></a>
+<a name="l87"><span class="ln">87   </span></a>
+<a name="l88"><span class="ln">88   </span></a><span class="s2"># Test Case K-Means: 1</span>
+<a name="l89"><span class="ln">89   </span></a><span class="s2"># D = np.array([[-1, 2], [-2, -2], [3, 2], [5, 4.3], [-3, 3], [-3, -1], [5, -3], [3, 4], [2.3, 6.5]])</span>
+<a name="l90"><span class="ln">90   </span></a><span class="s2"># cluster_num = 2</span>
+<a name="l91"><span class="ln">91   </span></a><span class="s2"># eps = 0.000001</span>
+<a name="l92"><span class="ln">92   </span></a><span class="s2"># k_means(D, cluster_num, eps)</span>
+<a name="l93"><span class="ln">93   </span></a>
+<a name="l94"><span class="ln">94   </span></a><span class="s2"># Test Case K-Means: 2</span>
+<a name="l95"><span class="ln">95   </span></a><span class="s2"># cluster_num = 3</span>
+<a name="l96"><span class="ln">96   </span></a><span class="s2"># eps = 0.000001</span>
+<a name="l97"><span class="ln">97   </span></a><span class="s2"># k_means(D, cluster_num, eps)</span>
+<a name="l98"><span class="ln">98   </span></a>
+<a name="l99"><span class="ln">99   </span></a><span class="s2"># Test Case K-Means: 3</span>
+<a name="l100"><span class="ln">100  </span></a><span class="s2"># X, y = make_blobs(n_samples=300, centers=3, random_state=35)</span>
+<a name="l101"><span class="ln">101  </span></a><span class="s2"># cluster_num = 3</span>
+<a name="l102"><span class="ln">102  </span></a><span class="s2"># eps = 0.00000001</span>
+<a name="l103"><span class="ln">103  </span></a><span class="s2"># k_means(X, cluster_num, eps)</span>
+<a name="l104"><span class="ln">104  </span></a>
+<a name="l105"><span class="ln">105  </span></a>
+<a name="l106"><span class="ln">106  </span></a><span class="s2"># Implement the DBSCAN Clustering Algorithm</span>
+<a name="l107"><span class="ln">107  </span></a><span class="s0">def </span><span class="s1">dbscan(data_matrix</span><span class="s0">, </span><span class="s1">minpts</span><span class="s0">, </span><span class="s1">epsilon):</span>
+<a name="l108"><span class="ln">108  </span></a>    <span class="s2"># This is what keeps track of what cluster a data instance has been assigned to.</span>
+<a name="l109"><span class="ln">109  </span></a>    <span class="s1">cluster_assignment = np.zeros(len(data_matrix))</span>
+<a name="l110"><span class="ln">110  </span></a>    <span class="s2"># print(len(cluster_assignment))</span>
+<a name="l111"><span class="ln">111  </span></a>
+<a name="l112"><span class="ln">112  </span></a>    <span class="s1">core = np.zeros(len(data_matrix))</span>
+<a name="l113"><span class="ln">113  </span></a>    <span class="s1">border = np.zeros(len(data_matrix))</span>
+<a name="l114"><span class="ln">114  </span></a>    <span class="s1">noise = np.zeros(len(data_matrix))</span>
+<a name="l115"><span class="ln">115  </span></a>    <span class="s1">epsilon_neighborhood = np.zeros((len(data_matrix)</span><span class="s0">, </span><span class="s1">len(data_matrix)))</span>
+<a name="l116"><span class="ln">116  </span></a>    <span class="s2"># print(data_matrix[0])</span>
+<a name="l117"><span class="ln">117  </span></a>
+<a name="l118"><span class="ln">118  </span></a>    <span class="s2"># find all the core points</span>
+<a name="l119"><span class="ln">119  </span></a>    <span class="s2"># compute the epsilon neighborhood of x_i</span>
+<a name="l120"><span class="ln">120  </span></a>    <span class="s2"># find the euclidean distance between this point and every other</span>
+<a name="l121"><span class="ln">121  </span></a>    <span class="s2"># and if it is &lt;= epsilon add it to neighborhood</span>
+<a name="l122"><span class="ln">122  </span></a>    <span class="s2"># use np.append(data, axis=0)</span>
+<a name="l123"><span class="ln">123  </span></a>    <span class="s2"># initialized the cluster label of x_i to be 0</span>
+<a name="l124"><span class="ln">124  </span></a>    <span class="s2"># if the size of the epsilon neighborhood is &gt;= minpts then</span>
+<a name="l125"><span class="ln">125  </span></a>    <span class="s2"># add x_i to core</span>
+<a name="l126"><span class="ln">126  </span></a>    <span class="s2"># else</span>
+<a name="l127"><span class="ln">127  </span></a>    <span class="s2"># add x_i to border</span>
+<a name="l128"><span class="ln">128  </span></a>    <span class="s0">for </span><span class="s1">data </span><span class="s0">in </span><span class="s1">range(len(data_matrix)):</span>
+<a name="l129"><span class="ln">129  </span></a>        <span class="s1">neighborhood = np.array([])</span>
+<a name="l130"><span class="ln">130  </span></a>        <span class="s0">for </span><span class="s1">possible_neighbor </span><span class="s0">in </span><span class="s1">range(len(data_matrix)):</span>
+<a name="l131"><span class="ln">131  </span></a>            <span class="s0">if </span><span class="s1">possible_neighbor != data:</span>
+<a name="l132"><span class="ln">132  </span></a>                <span class="s1">distance = </span><span class="s3">0</span>
+<a name="l133"><span class="ln">133  </span></a>                <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(len(data_matrix[data])):</span>
+<a name="l134"><span class="ln">134  </span></a>                    <span class="s1">point_1 = data_matrix[data][i]</span>
+<a name="l135"><span class="ln">135  </span></a>                    <span class="s1">point_2 = data_matrix[possible_neighbor][i]</span>
+<a name="l136"><span class="ln">136  </span></a>                    <span class="s1">distance += (data_matrix[possible_neighbor][i] - data_matrix[data][i]) ** </span><span class="s3">2</span>
+<a name="l137"><span class="ln">137  </span></a>                <span class="s1">distance = math.sqrt(distance)</span>
+<a name="l138"><span class="ln">138  </span></a>                <span class="s0">if </span><span class="s1">distance &lt; epsilon:</span>
+<a name="l139"><span class="ln">139  </span></a>                    <span class="s1">neighborhood = np.append(neighborhood</span><span class="s0">, </span><span class="s1">possible_neighbor)</span>
+<a name="l140"><span class="ln">140  </span></a>        <span class="s0">if </span><span class="s1">len(neighborhood) != </span><span class="s3">0</span><span class="s1">:</span>
+<a name="l141"><span class="ln">141  </span></a>            <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">neighborhood:</span>
+<a name="l142"><span class="ln">142  </span></a>                <span class="s1">index = int(i)</span>
+<a name="l143"><span class="ln">143  </span></a>                <span class="s1">epsilon_neighborhood[data][index] = </span><span class="s3">1</span>
+<a name="l144"><span class="ln">144  </span></a>            <span class="s0">if </span><span class="s1">len(neighborhood) &gt;= minpts:</span>
+<a name="l145"><span class="ln">145  </span></a>                <span class="s1">core[data] = </span><span class="s3">1</span>
+<a name="l146"><span class="ln">146  </span></a>            <span class="s2"># elif len(epsilon_neighborhood) &gt; 0:</span>
+<a name="l147"><span class="ln">147  </span></a>            <span class="s2">#     border[data] = 1</span>
+<a name="l148"><span class="ln">148  </span></a>
+<a name="l149"><span class="ln">149  </span></a>    <span class="s2"># now we are going to go through all the core points</span>
+<a name="l150"><span class="ln">150  </span></a>    <span class="s2"># grow out the cluster</span>
+<a name="l151"><span class="ln">151  </span></a>    <span class="s1">k = </span><span class="s3">0</span>
+<a name="l152"><span class="ln">152  </span></a>    <span class="s0">for </span><span class="s1">data </span><span class="s0">in </span><span class="s1">range(len(core)):</span>
+<a name="l153"><span class="ln">153  </span></a>        <span class="s2"># check and make sure data has no label</span>
+<a name="l154"><span class="ln">154  </span></a>        <span class="s0">if </span><span class="s1">cluster_assignment[data] == </span><span class="s3">0 </span><span class="s0">and </span><span class="s1">core[data] == </span><span class="s3">1</span><span class="s1">:</span>
+<a name="l155"><span class="ln">155  </span></a>            <span class="s1">k += </span><span class="s3">1</span>
+<a name="l156"><span class="ln">156  </span></a>            <span class="s1">cluster_assignment[data] = k</span>
+<a name="l157"><span class="ln">157  </span></a>            <span class="s2"># DensityConnected is a function that lets us explore the epsilon neighborhood of x_i</span>
+<a name="l158"><span class="ln">158  </span></a>            <span class="s2"># and add all the points in the neighborhood to the same cluster as x_i</span>
+<a name="l159"><span class="ln">159  </span></a>            <span class="s2"># as well as any core points with x_i neighborhood and their epsilon neighborhood points</span>
+<a name="l160"><span class="ln">160  </span></a>            <span class="s1">before_core = np.copy(core)</span>
+<a name="l161"><span class="ln">161  </span></a>            <span class="s1">cluster_assignment = density_connected(data</span><span class="s0">, </span><span class="s1">k</span><span class="s0">, </span><span class="s1">epsilon_neighborhood</span><span class="s0">, </span><span class="s1">cluster_assignment</span><span class="s0">, </span><span class="s1">core)</span>
+<a name="l162"><span class="ln">162  </span></a>            <span class="s1">core = np.copy(before_core)</span>
+<a name="l163"><span class="ln">163  </span></a>
+<a name="l164"><span class="ln">164  </span></a>    <span class="s2"># If there is a point in cluster_assignment the has a label of 0</span>
+<a name="l165"><span class="ln">165  </span></a>    <span class="s2"># add it to noise</span>
+<a name="l166"><span class="ln">166  </span></a>    <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(len(cluster_assignment)):</span>
+<a name="l167"><span class="ln">167  </span></a>        <span class="s0">if </span><span class="s1">cluster_assignment[i] == </span><span class="s3">0</span><span class="s1">:</span>
+<a name="l168"><span class="ln">168  </span></a>            <span class="s1">noise[i] = </span><span class="s3">1</span>
+<a name="l169"><span class="ln">169  </span></a>
+<a name="l170"><span class="ln">170  </span></a>    <span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">range(len(core)):</span>
+<a name="l171"><span class="ln">171  </span></a>        <span class="s0">if </span><span class="s1">core[i] == </span><span class="s3">0 </span><span class="s0">and </span><span class="s1">noise[i] == </span><span class="s3">0</span><span class="s1">:</span>
+<a name="l172"><span class="ln">172  </span></a>            <span class="s1">border[i] = </span><span class="s3">1</span>
+<a name="l173"><span class="ln">173  </span></a>
+<a name="l174"><span class="ln">174  </span></a>    <span class="s2"># print(&quot;CA:&quot;, cluster_assignment, &quot;\n&quot;, &quot;CORE:&quot;,  core, &quot;\n&quot;, &quot;BORDER:&quot;,  border, &quot;\n&quot;, &quot;NOISE:&quot;, noise)</span>
+<a name="l175"><span class="ln">175  </span></a>    <span class="s0">return </span><span class="s1">cluster_assignment</span><span class="s0">, </span><span class="s1">core</span><span class="s0">, </span><span class="s1">border</span><span class="s0">, </span><span class="s1">noise</span>
+<a name="l176"><span class="ln">176  </span></a>
+<a name="l177"><span class="ln">177  </span></a>
+<a name="l178"><span class="ln">178  </span></a><span class="s0">def </span><span class="s1">density_connected(x</span><span class="s0">, </span><span class="s1">k</span><span class="s0">, </span><span class="s1">en</span><span class="s0">, </span><span class="s1">ca</span><span class="s0">, </span><span class="s1">core):</span>
+<a name="l179"><span class="ln">179  </span></a>    <span class="s2"># for each data in en[x]</span>
+<a name="l180"><span class="ln">180  </span></a>    <span class="s2"># ca[data] = k</span>
+<a name="l181"><span class="ln">181  </span></a>    <span class="s2"># if data in core</span>
+<a name="l182"><span class="ln">182  </span></a>    <span class="s2"># ca = density_connected(data, k, en, ca, core)</span>
+<a name="l183"><span class="ln">183  </span></a>    <span class="s0">for </span><span class="s1">index </span><span class="s0">in </span><span class="s1">range(len(en[x])):</span>
+<a name="l184"><span class="ln">184  </span></a>        <span class="s0">if </span><span class="s1">en[x][index] == </span><span class="s3">1</span><span class="s1">:</span>
+<a name="l185"><span class="ln">185  </span></a>            <span class="s1">ca[index] = k</span>
+<a name="l186"><span class="ln">186  </span></a>            <span class="s0">if </span><span class="s1">core[index] == </span><span class="s3">1</span><span class="s1">:</span>
+<a name="l187"><span class="ln">187  </span></a>                <span class="s2"># added core[x] = 0 to stop inf recursion</span>
+<a name="l188"><span class="ln">188  </span></a>                <span class="s2"># if a core point is going to be checked then no longer consider it a core point</span>
+<a name="l189"><span class="ln">189  </span></a>                <span class="s1">core[x] = </span><span class="s3">0</span>
+<a name="l190"><span class="ln">190  </span></a>                <span class="s1">ca = density_connected(index</span><span class="s0">, </span><span class="s1">k</span><span class="s0">, </span><span class="s1">en</span><span class="s0">, </span><span class="s1">ca</span><span class="s0">, </span><span class="s1">core)</span>
+<a name="l191"><span class="ln">191  </span></a>    <span class="s0">return </span><span class="s1">ca</span>
+<a name="l192"><span class="ln">192  </span></a>
+<a name="l193"><span class="ln">193  </span></a>
+<a name="l194"><span class="ln">194  </span></a><span class="s2"># DBSCAN Test Case: 1</span>
+<a name="l195"><span class="ln">195  </span></a><span class="s2"># X, y = make_blobs(n_samples=300, centers=3, random_state=35)</span>
+<a name="l196"><span class="ln">196  </span></a><span class="s2"># ep = 0.5</span>
+<a name="l197"><span class="ln">197  </span></a><span class="s2"># min_point = 10</span>
+<a name="l198"><span class="ln">198  </span></a><span class="s2"># dbscan(X, min_point, ep)</span>
+<a name="l199"><span class="ln">199  </span></a>
+<a name="l200"><span class="ln">200  </span></a><span class="s0">def </span><span class="s1">objective_function(data_matrix</span><span class="s0">, </span><span class="s1">labels</span><span class="s0">, </span><span class="s1">num_k):</span>
+<a name="l201"><span class="ln">201  </span></a>    <span class="s0">for </span><span class="s1">j </span><span class="s0">in </span><span class="s1">range(</span><span class="s3">1</span><span class="s0">, </span><span class="s1">int(labels.max()) + </span><span class="s3">1</span><span class="s1">):</span>
+<a name="l202"><span class="ln">202  </span></a>        <span class="s1">of = np.zeros(len(data_matrix[</span><span class="s3">0</span><span class="s1">]))</span>
+<a name="l203"><span class="ln">203  </span></a>        <span class="s1">count = </span><span class="s3">0</span>
+<a name="l204"><span class="ln">204  </span></a>        <span class="s0">for </span><span class="s1">data </span><span class="s0">in </span><span class="s1">range(len(data_matrix)):</span>
+<a name="l205"><span class="ln">205  </span></a>            <span class="s0">if </span><span class="s1">ca[data] == j:</span>
+<a name="l206"><span class="ln">206  </span></a>                <span class="s1">of = np.add(of</span><span class="s0">, </span><span class="s1">data_matrix[data])</span>
+<a name="l207"><span class="ln">207  </span></a>                <span class="s1">count += </span><span class="s3">1</span>
+<a name="l208"><span class="ln">208  </span></a>        <span class="s0">for </span><span class="s1">k </span><span class="s0">in </span><span class="s1">range(len(of)):</span>
+<a name="l209"><span class="ln">209  </span></a>            <span class="s1">of[k] = of[k] / count</span>
+<a name="l210"><span class="ln">210  </span></a>        <span class="s1">print(</span><span class="s4">&quot;Objective Function&quot;</span><span class="s0">, </span><span class="s1">num_k</span><span class="s0">, </span><span class="s4">&quot;, Cluster:&quot;</span><span class="s0">, </span><span class="s1">j)</span>
+<a name="l211"><span class="ln">211  </span></a>        <span class="s1">print(of)</span>
+<a name="l212"><span class="ln">212  </span></a>
+<a name="l213"><span class="ln">213  </span></a>
+<a name="l214"><span class="ln">214  </span></a><span class="s2"># Analyze Your Data</span>
+<a name="l215"><span class="ln">215  </span></a><span class="s2"># Importing the modified-breast-cancer-wisconsin data.</span>
+<a name="l216"><span class="ln">216  </span></a><span class="s2"># The data instances with missing attributes were removed.</span>
+<a name="l217"><span class="ln">217  </span></a><span class="s2"># I also removed the attributes that were categorical since,</span>
+<a name="l218"><span class="ln">218  </span></a><span class="s2"># we are only supposed to be working with numerical attributes</span>
+<a name="l219"><span class="ln">219  </span></a>
+<a name="l220"><span class="ln">220  </span></a><span class="s1">Data = np.loadtxt(</span><span class="s4">&quot;bcwData.csv&quot;</span><span class="s0">, </span><span class="s1">delimiter=</span><span class="s4">&quot;,&quot;</span><span class="s1">)</span>
+<a name="l221"><span class="ln">221  </span></a><span class="s2"># changing from float array to int given that there are no floats. Looks nicer.</span>
+<a name="l222"><span class="ln">222  </span></a><span class="s1">Data = Data.astype(int)</span>
+<a name="l223"><span class="ln">223  </span></a><span class="s2"># print(Data)</span>
+<a name="l224"><span class="ln">224  </span></a>
+<a name="l225"><span class="ln">225  </span></a><span class="s2"># 8</span>
+<a name="l226"><span class="ln">226  </span></a><span class="s1">pca = PCA(n_components=</span><span class="s3">2</span><span class="s1">)</span>
+<a name="l227"><span class="ln">227  </span></a><span class="s1">pca_BCWData = pca.fit_transform(Data)</span>
+<a name="l228"><span class="ln">228  </span></a><span class="s1">x = pca_BCWData[:</span><span class="s0">, </span><span class="s3">0</span><span class="s1">]</span>
+<a name="l229"><span class="ln">229  </span></a><span class="s1">y = pca_BCWData[:</span><span class="s0">, </span><span class="s3">1</span><span class="s1">]</span>
+<a name="l230"><span class="ln">230  </span></a><span class="s1">fig</span><span class="s0">, </span><span class="s1">ax = plt.subplots()</span>
+<a name="l231"><span class="ln">231  </span></a><span class="s1">ax.scatter(x</span><span class="s0">, </span><span class="s1">y)</span>
+<a name="l232"><span class="ln">232  </span></a><span class="s2"># plt.show()</span>
+<a name="l233"><span class="ln">233  </span></a>
+<a name="l234"><span class="ln">234  </span></a><span class="s2"># It does look like there are clusters in two dimensions.</span>
+<a name="l235"><span class="ln">235  </span></a><span class="s2"># There appears to be one main cluster and maybe a second cluster.</span>
+<a name="l236"><span class="ln">236  </span></a><span class="s2"># Other than the obvious cluster a lot of the points look like noise.</span>
+<a name="l237"><span class="ln">237  </span></a>
+<a name="l238"><span class="ln">238  </span></a><span class="s2"># 9</span>
+<a name="l239"><span class="ln">239  </span></a><span class="s1">pca = PCA()</span>
+<a name="l240"><span class="ln">240  </span></a><span class="s1">pca_BCWDataOriginal = pca.fit_transform(Data)</span>
+<a name="l241"><span class="ln">241  </span></a><span class="s1">fig</span><span class="s0">, </span><span class="s1">ax = plt.subplots()</span>
+<a name="l242"><span class="ln">242  </span></a><span class="s1">plt.plot(range(</span><span class="s3">0</span><span class="s0">, </span><span class="s3">9</span><span class="s1">)</span><span class="s0">, </span><span class="s1">np.cumsum(pca.explained_variance_ratio_)</span><span class="s0">, </span><span class="s1">marker=</span><span class="s4">'x'</span><span class="s1">)</span>
+<a name="l243"><span class="ln">243  </span></a><span class="s1">plt.show()</span>
+<a name="l244"><span class="ln">244  </span></a>
+<a name="l245"><span class="ln">245  </span></a><span class="s2"># The number of principal components to reduce the dimensionality would be best at 4.</span>
+<a name="l246"><span class="ln">246  </span></a><span class="s2"># This is to maximize reduction and keep the total variance retained greater than or equal to 90%.</span>
+<a name="l247"><span class="ln">247  </span></a>
+<a name="l248"><span class="ln">248  </span></a><span class="s2"># 10</span>
+<a name="l249"><span class="ln">249  </span></a><span class="s1">pca = PCA(n_components=</span><span class="s3">4</span><span class="s1">)</span>
+<a name="l250"><span class="ln">250  </span></a><span class="s1">pca_BCWDataReduced = pca.fit_transform(Data)</span>
+<a name="l251"><span class="ln">251  </span></a><span class="s1">print(</span><span class="s4">&quot;K-Means Experiment&quot;</span><span class="s1">)</span>
+<a name="l252"><span class="ln">252  </span></a><span class="s1">print(</span><span class="s4">&quot;Vary K, Fixed epsilon (0.0001)&quot;</span><span class="s1">)</span>
+<a name="l253"><span class="ln">253  </span></a><span class="s1">k_means_array = np.array([</span><span class="s3">1</span><span class="s0">, </span><span class="s3">2</span><span class="s0">, </span><span class="s3">3</span><span class="s0">, </span><span class="s3">5</span><span class="s0">, </span><span class="s3">7</span><span class="s1">])</span>
+<a name="l254"><span class="ln">254  </span></a><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">k_means_array:</span>
+<a name="l255"><span class="ln">255  </span></a>    <span class="s1">ca</span><span class="s0">, </span><span class="s1">m = k_means(pca_BCWDataOriginal</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s3">0.0001</span><span class="s1">)</span>
+<a name="l256"><span class="ln">256  </span></a>    <span class="s1">print(</span><span class="s4">&quot;K =&quot;</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s4">&quot; Original&quot;</span><span class="s1">)</span>
+<a name="l257"><span class="ln">257  </span></a>    <span class="s1">print(</span><span class="s4">&quot;Objective Function Original&quot;</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s4">&quot;:&quot;</span><span class="s1">)</span>
+<a name="l258"><span class="ln">258  </span></a>    <span class="s1">objective_function(pca_BCWDataOriginal</span><span class="s0">, </span><span class="s1">ca</span><span class="s0">, </span><span class="s1">i)</span>
+<a name="l259"><span class="ln">259  </span></a>    <span class="s1">ca</span><span class="s0">, </span><span class="s1">m = k_means(pca_BCWDataReduced</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s3">0.0001</span><span class="s1">)</span>
+<a name="l260"><span class="ln">260  </span></a>    <span class="s1">print(</span><span class="s4">&quot;K =&quot;</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s4">&quot; Reduced&quot;</span><span class="s1">)</span>
+<a name="l261"><span class="ln">261  </span></a>    <span class="s1">print(</span><span class="s4">&quot;Objective Function Reduced&quot;</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s4">&quot;:&quot;</span><span class="s1">)</span>
+<a name="l262"><span class="ln">262  </span></a>    <span class="s1">objective_function(pca_BCWDataReduced</span><span class="s0">, </span><span class="s1">ca</span><span class="s0">, </span><span class="s1">i)</span>
+<a name="l263"><span class="ln">263  </span></a>    <span class="s1">print(</span><span class="s4">&quot;</span><span class="s0">\n</span><span class="s4">&quot;</span><span class="s1">)</span>
+<a name="l264"><span class="ln">264  </span></a><span class="s1">print(</span><span class="s4">&quot;</span><span class="s0">\n</span><span class="s4">&quot;</span><span class="s1">)</span>
+<a name="l265"><span class="ln">265  </span></a>
+<a name="l266"><span class="ln">266  </span></a><span class="s2"># 11</span>
+<a name="l267"><span class="ln">267  </span></a><span class="s1">print(</span><span class="s4">&quot;DBSCAN Experiments&quot;</span><span class="s1">)</span>
+<a name="l268"><span class="ln">268  </span></a><span class="s1">print(</span><span class="s4">&quot;Vary MinPoints, Fixed Epsilon (0.5)&quot;</span><span class="s1">)</span>
+<a name="l269"><span class="ln">269  </span></a><span class="s1">min_array = np.array([</span><span class="s3">10</span><span class="s0">, </span><span class="s3">17</span><span class="s0">, </span><span class="s3">5</span><span class="s0">, </span><span class="s3">20</span><span class="s0">, </span><span class="s3">23</span><span class="s1">])</span>
+<a name="l270"><span class="ln">270  </span></a><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">min_array:</span>
+<a name="l271"><span class="ln">271  </span></a>    <span class="s1">ca</span><span class="s0">, </span><span class="s1">c</span><span class="s0">, </span><span class="s1">b</span><span class="s0">, </span><span class="s1">n = dbscan(pca_BCWDataOriginal</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s3">0.5</span><span class="s1">)</span>
+<a name="l272"><span class="ln">272  </span></a>    <span class="s1">print(</span><span class="s4">&quot;MinPoints =&quot;</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s4">&quot;Original&quot;</span><span class="s1">)</span>
+<a name="l273"><span class="ln">273  </span></a>    <span class="s1">print(ca.max())</span>
+<a name="l274"><span class="ln">274  </span></a>    <span class="s1">ca</span><span class="s0">, </span><span class="s1">c</span><span class="s0">, </span><span class="s1">b</span><span class="s0">, </span><span class="s1">n = dbscan(pca_BCWDataReduced</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s3">0.5</span><span class="s1">)</span>
+<a name="l275"><span class="ln">275  </span></a>    <span class="s1">print(</span><span class="s4">&quot;MinPoints =&quot;</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s4">&quot;Reduced&quot;</span><span class="s1">)</span>
+<a name="l276"><span class="ln">276  </span></a>    <span class="s1">print(ca.max())</span>
+<a name="l277"><span class="ln">277  </span></a><span class="s1">print(</span><span class="s4">&quot;</span><span class="s0">\n</span><span class="s4">&quot;</span><span class="s1">)</span>
+<a name="l278"><span class="ln">278  </span></a>
+<a name="l279"><span class="ln">279  </span></a><span class="s1">print(</span><span class="s4">&quot;Vary Epsilon, Fixed MinPoints (10)&quot;</span><span class="s1">)</span>
+<a name="l280"><span class="ln">280  </span></a><span class="s1">epsilon_array = np.array([</span><span class="s3">0.25</span><span class="s0">, </span><span class="s3">0.5</span><span class="s0">, </span><span class="s3">1</span><span class="s0">, </span><span class="s3">2</span><span class="s0">, </span><span class="s3">10</span><span class="s1">])</span>
+<a name="l281"><span class="ln">281  </span></a><span class="s0">for </span><span class="s1">i </span><span class="s0">in </span><span class="s1">epsilon_array:</span>
+<a name="l282"><span class="ln">282  </span></a>    <span class="s1">ca</span><span class="s0">, </span><span class="s1">c</span><span class="s0">, </span><span class="s1">b</span><span class="s0">, </span><span class="s1">n = dbscan(pca_BCWDataOriginal</span><span class="s0">, </span><span class="s3">10</span><span class="s0">, </span><span class="s1">i)</span>
+<a name="l283"><span class="ln">283  </span></a>    <span class="s1">print(</span><span class="s4">&quot;Epsilon =&quot;</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s4">&quot;Original&quot;</span><span class="s1">)</span>
+<a name="l284"><span class="ln">284  </span></a>    <span class="s1">print(ca.max())</span>
+<a name="l285"><span class="ln">285  </span></a>    <span class="s1">ca</span><span class="s0">, </span><span class="s1">c</span><span class="s0">, </span><span class="s1">b</span><span class="s0">, </span><span class="s1">n = dbscan(pca_BCWDataReduced</span><span class="s0">, </span><span class="s3">10</span><span class="s0">, </span><span class="s1">i)</span>
+<a name="l286"><span class="ln">286  </span></a>    <span class="s1">print(</span><span class="s4">&quot;Epsilon =&quot;</span><span class="s0">, </span><span class="s1">i</span><span class="s0">, </span><span class="s4">&quot;Reduced&quot;</span><span class="s1">)</span>
+<a name="l287"><span class="ln">287  </span></a>    <span class="s1">print(ca.max())</span>
+<a name="l288"><span class="ln">288  </span></a></pre>
+</body>
+</html>
